@@ -20,6 +20,7 @@ jobs:
           cd secp256k1-vrf
           ./autogen.sh
           ./configure
+          cd ..
           LDLIBS=" -L/ucrt64/lib -lsecp256k1-vrf  -lgmp -L/usr/lib -lcurl" CFLAGS="-I/usr/include" make
       - uses: actions/upload-artifact@v3
         with:
