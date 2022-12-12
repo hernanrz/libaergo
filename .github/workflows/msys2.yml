@@ -37,3 +37,8 @@ jobs:
         run: g++ examples/contract_query/contract_query.cpp -std=c++17 -L/mingw64/bin -laergo -o contract_query_cpp
       - name: test C++ execution
         run: ./contract_query_cpp
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: libaergo.zip
+          path: libaergo-1.1.dll libaergo-1.1.lib
