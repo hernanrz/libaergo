@@ -2,7 +2,7 @@ name: MSYS2
 on: [push, pull_request]
 
 jobs:
-  msys2-ucrt64:
+  msys2-mingw64:
     runs-on: windows-latest
     defaults:
       run:
@@ -30,7 +30,7 @@ jobs:
           make
           make install
       - name: test C compilation
-        run: gcc examples/contract_query/contract_query.c -static -L/mingw64/bin -laergo contract_query
+        run: gcc examples/contract_query/contract_query.c -static -L/mingw64/bin -laergo -o contract_query
       - name: test C execution
         run: ./contract_query
       - name: test C++ compilation
