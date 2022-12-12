@@ -30,10 +30,10 @@ jobs:
           make
           make install
       - name: test C compilation
-        run: gcc examples/contract_query/contract_query.c -static -L/mingw64/bin -laergo -o contract_query
+        run: gcc examples/contract_query/contract_query.c -L/mingw64/bin -laergo -o contract_query
       - name: test C execution
         run: ./contract_query
       - name: test C++ compilation
-        run: g++ examples/contract_query/contract_query.cpp -static -std=c++17 -L/mingw64/bin -laergo -o contract_query_cpp
+        run: g++ examples/contract_query/contract_query.cpp -std=c++17 -L/mingw64/bin -laergo -o contract_query_cpp
       - name: test C++ execution
         run: ./contract_query_cpp
