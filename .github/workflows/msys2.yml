@@ -2,7 +2,7 @@ name: MSYS2
 on: [push, pull_request]
 
 jobs:
-  msys2-ucrt64:
+  msys2-mingw64:
     runs-on: windows-latest
     defaults:
       run:
@@ -16,11 +16,12 @@ jobs:
           install: mingw-w64-x86_64-gcc mingw-w64-x86_64-gmp mingw-w64-x86_64-curl git mingw-w64-x86_64-autotools mingw-w64-x86_64-make
       - name: CI-Build
         run: |
-          pacman -S --noconfirm libcurl
           git clone --depth=1 https://github.com/aergoio/secp256k1-vrf
           cd secp256k1-vrf
           ./autogen.sh
           ./configure
+          make
+          make install
           cd ..
           export INCPATH="/mingw64/include"
           export LIBNICK="libaergo.dll"
