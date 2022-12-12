@@ -2,7 +2,7 @@ name: MSYS2
 on: [push, pull_request]
 
 jobs:
-  msys2-mingw64:
+  msys2-ucrt64:
     runs-on: windows-latest
     defaults:
       run:
@@ -13,7 +13,7 @@ jobs:
         with:
           msystem: mingw64
           update: true
-          install: mingw-w64-x86_64-gcc mingw-w64-x86_64-gmp mingw-w64-x86_64-curl git mingw-w64-x86_64-autotools mingw-w64-x86_64-make
+          install: mingw-w64-x86_64-gcc mingw-w64-x86_64-gmp mingw-w64-x86_64-curl-winssl git mingw-w64-x86_64-autotools mingw-w64-x86_64-make
       - name: CI-Build
         run: |
           git clone --depth=1 https://github.com/aergoio/secp256k1-vrf
@@ -30,10 +30,10 @@ jobs:
           make
           make install
       - name: test C compilation
-        run: gcc examples/contract_query/contract_query.c -static -laergo -o contract_query
+        run: gcc examples/contract_query/contract_query.c -static -L/mingw64/bin -laergo contract_query
       - name: test C execution
         run: ./contract_query
       - name: test C++ compilation
-        run: g++ examples/contract_query/contract_query.cpp -static -std=c++17 -laergo -o contract_query_cpp
+        run: g++ examples/contract_query/contract_query.cpp -static -std=c++17 -L/mingw64/bin -laergo -o contract_query_cpp
       - name: test C++ execution
         run: ./contract_query_cpp
