@@ -40,5 +40,5 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: libaergo.zip
-          path: libaergo-1.1.dll libaergo-1.1.lib
+          name: libaergo
+          path: libaergo-1.1.*
