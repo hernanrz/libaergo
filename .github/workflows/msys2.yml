@@ -1,44 +1,59 @@
-name: MSYS2
-on: [push, pull_request]
+name: BuildWin
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
-  msys2-mingw64:
+  build:
+
     runs-on: windows-latest
-    defaults:
-      run:
-        shell: msys2 {0}
+
     steps:
-      - uses: actions/checkout@v3
-      - uses: msys2/setup-msys2@v2
-        with:
-          msystem: mingw64
-          update: true
-          install: mingw-w64-x86_64-gcc mingw-w64-x86_64-gmp mingw-w64-x86_64-curl-winssl git mingw-w64-x86_64-autotools mingw-w64-x86_64-make
-      - name: CI-Build
-        run: |
-          git clone --depth=1 https://github.com/aergoio/secp256k1-vrf
-          cd secp256k1-vrf
-          ./autogen.sh
-          ./configure
-          make
-          make install
-          cd ..
-          export INCPATH="/mingw64/include"
-          export LIBNICK="libaergo.dll"
-          export LIBPATH="/mingw64/bin/"
-          export LDLIBS="-lsecp256k1-vrf -lgmp -lcurl"
-          make
-          make install
-      - name: test C compilation
-        run: gcc examples/contract_query/contract_query.c -L/mingw64/bin -laergo -o contract_query
-      - name: test C execution
-        run: ./contract_query
-      - name: test C++ compilation
-        run: g++ examples/contract_query/contract_query.cpp -std=c++17 -L/mingw64/bin -laergo -o contract_query_cpp
-      - name: test C++ execution
-        run: ./contract_query_cpp
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: libaergo
-          path: libaergo-1.1.*
+    - uses: actions/checkout@v2
+    - name: install libcurl
+      shell: cmd
+      run: |
+        vcpkg install curl:x64-windows curl:x86-windows
+    - name: clone libsecp source files
+      shell: cmd
+      run: |
+        git clone https://github.com/aergoio/secp256k1-vrf
+    - name: download libsecp256k1-vrf library
+      shell: cmd
+      run: |
+        curl.exe https://github.com/aergoio/secp256k1-vrf/releases/download/v0.1/secp256k1-vrf-windows.zip --output secp256k1-vrf.zip
+        7z x secp256k1-vrf.zip
+    - name: build x64
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        cl.exe /I .\nanopb /I "%cd%\secp256k1-vrf\include"  /I "C:\vcpkg\installed\x64-windows\include" /DWIN32 /D_WIN32 /DMBEDTLS_PLATFORM_C /LD aergo.c win32/dllmain.c libcurl.lib secp256k1-vrf.lib ws2_32.lib /Felibaergo-1.1.dll /link /LIBPATH:"%cd%\x64" /LIBPATH:"C:\vcpkg\installed\x64-windows\lib"
+
+        mkdir libaergo-x64
+        move libaergo-1.1.dll libaergo-x64\
+        move libaergo-1.1.lib libaergo-x64\
+    - name: build win32
+      shell: cmd
+      run: |
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        cl.exe /I .\nanopb /I "%cd%\secp256k1-vrf\include"  /I "C:\vcpkg\installed\x86-windows\include" /DWIN32 /D_WIN32 /DMBEDTLS_PLATFORM_C /LD aergo.c win32/dllmain.c libcurl.lib secp256k1-vrf.lib ws2_32.lib /Felibaergo-1.1.dll /link /LIBPATH:"%cd%\win32" /LIBPATH:"C:\vcpkg\installed\x86-windows\lib"
+
+        mkdir libaergo-x86
+        move libaergo-1.1.dll libaergo-x86\
+        move libaergo-1.1.lib libaergo-x64\
+    - name: list files
+      shell: cmd
+      run: |
+        dir libaergo-x86
+        dir libaergo-x64
+    - name: upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: libaergo-windows
+        path: |
+          libaergo-x86
+          libaergo-x64
