@@ -17,7 +17,7 @@ jobs:
     - name: install libcurl
       shell: cmd
       run: |
-        vcpkg install curl:x64-windows curl:x86-windows
+        vcpkg install curl[http2]:x64-windows curl[http2]:x86-windows
     - name: clone libsecp source files
       shell: cmd
       run: |
@@ -25,35 +25,19 @@ jobs:
     - name: download libsecp256k1-vrf library
       shell: cmd
       run: |
-        curl.exe https://github.com/aergoio/secp256k1-vrf/releases/download/v0.1/secp256k1-vrf-windows.zip --output secp256k1-vrf.zip
-        7z x secp256k1-vrf.zip
-    - name: build x64
-      shell: cmd
-      run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        cl.exe /I .\nanopb /I "%cd%\secp256k1-vrf\include"  /I "C:\vcpkg\installed\x64-windows\include" /DWIN32 /D_WIN32 /DMBEDTLS_PLATFORM_C /LD aergo.c win32/dllmain.c libcurl.lib secp256k1-vrf.lib ws2_32.lib /Felibaergo-1.1.dll /link /LIBPATH:"%cd%\x64" /LIBPATH:"C:\vcpkg\installed\x64-windows\lib"
-
-        mkdir libaergo-x64
-        move libaergo-1.1.dll libaergo-x64\
-        move libaergo-1.1.lib libaergo-x64\
+        wget  https://github.com/aergoio/secp256k1-vrf/releases/download/v0.1/secp256k1-vrf-windows.zip -outfile secp256k1-vrf.zip
+        tar xf secp256k1-vrf.zip
     - name: build win32
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
-        cl.exe /I .\nanopb /I "%cd%\secp256k1-vrf\include"  /I "C:\vcpkg\installed\x86-windows\include" /DWIN32 /D_WIN32 /DMBEDTLS_PLATFORM_C /LD aergo.c win32/dllmain.c libcurl.lib secp256k1-vrf.lib ws2_32.lib /Felibaergo-1.1.dll /link /LIBPATH:"%cd%\win32" /LIBPATH:"C:\vcpkg\installed\x86-windows\lib"
-
-        mkdir libaergo-x86
-        move libaergo-1.1.dll libaergo-x86\
-        move libaergo-1.1.lib libaergo-x64\
+        builds-win\x86.bat
     - name: list files
       shell: cmd
       run: |
-        dir libaergo-x86
-        dir libaergo-x64
+        dir builds-win\x86
     - name: upload artifacts
       uses: actions/upload-artifact@v2
       with:
         name: libaergo-windows
         path: |
-          libaergo-x86
-          libaergo-x64
+          builds-win/x86
