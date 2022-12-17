@@ -30,7 +30,7 @@ jobs:
     - name: build x64
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cl.exe /I .\nanopb /I "%cd%\secp256k1-vrf\include"  /I "C:\vcpkg\installed\x64-windows\include" /DWIN32 /D_WIN32 /DMBEDTLS_PLATFORM_C /LD aergo.c win32/dllmain.c libcurl.lib secp256k1-vrf.lib ws2_32.lib /Felibaergo-1.1.dll /link /LIBPATH:"%cd%\x64" /LIBPATH:"C:\vcpkg\installed\x64-windows\lib"
 
         mkdir libaergo-x64
@@ -39,7 +39,7 @@ jobs:
     - name: build win32
       shell: cmd
       run: |
-        call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
+        call "C:\Program Files (x86)\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         cl.exe /I .\nanopb /I "%cd%\secp256k1-vrf\include"  /I "C:\vcpkg\installed\x86-windows\include" /DWIN32 /D_WIN32 /DMBEDTLS_PLATFORM_C /LD aergo.c win32/dllmain.c libcurl.lib secp256k1-vrf.lib ws2_32.lib /Felibaergo-1.1.dll /link /LIBPATH:"%cd%\win32" /LIBPATH:"C:\vcpkg\installed\x86-windows\lib"
 
         mkdir libaergo-x86
