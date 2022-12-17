@@ -2,7 +2,7 @@
 
 set curdir=%cd%
 set root=%cd%
-call C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Auxiliary\Build\vcvars32.bat
+call C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars32.bat
 cd %root%
 echo Going to %root%
 set vcpkgdir=C:\vcpkg\installed\x86-windows
