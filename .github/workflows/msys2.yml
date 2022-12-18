@@ -46,7 +46,7 @@ jobs:
     - name: test C compilation
       shell: cmd
       run: |
-        call C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set vcpkgdir=C:\vcpkg\installed\x64-windows
         cl.exe /I. examples\contract_query\contract_query.c builds-win\x64\libaergo-1.1.lib 
     - name: test C execution
@@ -56,7 +56,7 @@ jobs:
     - name: test C++ compilation
       shell: cmd
       run: |
-        call C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat
+        call "C:\Program Files\Microsoft Visual Studio\2022\Enterprise\VC\Auxiliary\Build\vcvars64.bat"
         set vcpkgdir=C:\vcpkg\installed\x64-windows
         cl.exe /std:c++17 /I. examples\contract_query\contract_query.cpp builds-win\x64\libaergo-1.1.lib
     - name: test C++ execution
